@@ -4,15 +4,39 @@ using UnityEngine;
 
 public class CarController : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public float moveSpeed = 5f; 
+    public float turnSpeed = 200f; 
+
+    private float moveInput, turnInput;
+
+    private Rigidbody2D rb;
+
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        
+        GetInputs();
+        HandleMovement();
+        if(isMoving()) HandleTurning();
     }
+    private void GetInputs(){
+        moveInput = Input.GetAxis("Vertical"); 
+        turnInput = Input.GetAxis("Horizontal"); 
+    }
+
+    private void HandleMovement()
+    {
+        Vector2 forward = transform.up * moveInput * moveSpeed * Time.deltaTime;
+        rb.MovePosition(rb.position + forward);
+    }
+
+    private void HandleTurning(){
+        float turn = -turnInput * turnSpeed * Time.deltaTime;
+        rb.rotation += turn;
+    }
+
+    private bool isMoving() => moveInput != 0;
 }
