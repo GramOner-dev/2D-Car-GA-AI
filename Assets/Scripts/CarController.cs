@@ -24,7 +24,7 @@ public class CarController : MonoBehaviour
     }
     private void GetInputs(){
         moveInput = Input.GetAxis("Vertical"); 
-        turnInput = Input.GetAxis("Horizontal"); 
+        turnInput = moveInput >= 0 ? Input.GetAxis("Horizontal") : - Input.GetAxis("Horizontal"); 
     }
 
     private void HandleMovement()
