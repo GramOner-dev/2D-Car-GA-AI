@@ -20,12 +20,20 @@ public class Wheel : MonoBehaviour
         Move();
     }
 
+    void RotateWheel(){
+        float carSpeed = Vector3.Scale(carRb.velocity, carRb.transform.forward).magnitude;        
+        float rotationAngle = CarPhysics.CalculateWheelTurnSpeed(carSpeed, wheelRadius);
+        localWheelRotation.x += rotationAngle;
+    }
+
     void TurnWheel(){
         float horizontalInput = Input.GetAxis("Horizontal");
         localWheelRotation.y = horizontalInput * maxTurnAngle;
     }
 
     public void Move(){
+        if(localWheelRotation.x > 360) localWheelRotation.x = 0f;
+        RotateWheel();
         if(wheelType == WheelType.frontWheel) TurnWheel();
         transform.localRotation = Quaternion.Euler(localWheelRotation);
     }
