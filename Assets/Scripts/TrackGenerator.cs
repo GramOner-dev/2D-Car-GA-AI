@@ -4,35 +4,53 @@ using UnityEngine;
 
 public class TrackGenerator : MonoBehaviour
 {
-    public int numberOfPoints = 100; 
-    public float trackLength = 50f; 
-    public float trackWidth = 2f; 
-    public float noiseScale = 0.1f; 
-    public LineRenderer trackRenderer; 
+    public int numberOfPoints = 100;
+    public float trackLength = 50f;
+    public float trackWidth = 2f;
+    public float noiseScale = 0.1f;
+    public float baseThicknessOfCentre, baseThicknessOfWalls;
+    public LineRenderer trackRenderer;
 
-    public LineRenderer outerBorderRenderer; 
-    public LineRenderer innerBorderRenderer; 
+    public LineRenderer outerBorderRenderer;
+    public LineRenderer innerBorderRenderer;
 
-    public EdgeCollider2D outerEdgeCollider; 
-    public EdgeCollider2D innerEdgeCollider; 
+    public EdgeCollider2D outerEdgeCollider;
+    public EdgeCollider2D innerEdgeCollider;
 
-    private float noiseOffset; 
+    public List<Vector2> centralPath;
+    private float totalTrackLength;
+
+    private float noiseOffset;
+
+    public float scaleFactor = 1f; 
 
     void Start()
-    {     
+    {
         noiseOffset = Random.Range(0f, 1000f);
         GenerateTrack();
     }
 
     void GenerateTrack()
     {
-        List<Vector2> centralPath = GenerateCentralPath();
+        centralPath = GenerateCentralPath();
+        totalTrackLength = CalculateTotalTrackLength(centralPath);
+        UpdateLineRendererThickness(); 
         RenderTrack(centralPath);
         CreateEdgeColliders(centralPath);
         RenderBorders(centralPath);
     }
 
-    List<Vector2> GenerateCentralPath()
+    private float CalculateTotalTrackLength(List<Vector2> path)
+    {
+        float length = 0f;
+        for (int i = 0; i < path.Count - 1; i++)
+        {
+            length += Vector2.Distance(path[i], path[i + 1]);
+        }
+        return length;
+    }
+
+    private List<Vector2> GenerateCentralPath()
     {
         List<Vector2> path = new List<Vector2>();
         float angle = 0f;
@@ -40,30 +58,44 @@ public class TrackGenerator : MonoBehaviour
 
         for (int i = 0; i < numberOfPoints; i++)
         {
-            
             float noiseValue = Mathf.PerlinNoise(noiseOffset + i * noiseScale, 0f);
-            angle += Mathf.Lerp(-45f, 45f, noiseValue); 
-            
+            angle += Mathf.Lerp(-45f, 45f, noiseValue);
+
             Vector2 direction = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
             currentPosition += direction * (trackLength / numberOfPoints);
 
-            path.Add(currentPosition);
+            path.Add(currentPosition * scaleFactor); 
         }
 
         return path;
     }
 
-    void RenderTrack(List<Vector2> path)
+    private void UpdateLineRendererThickness()
+    {
+        trackRenderer.startWidth = baseThicknessOfCentre * scaleFactor;
+        trackRenderer.endWidth = baseThicknessOfCentre * scaleFactor;
+
+        
+        outerBorderRenderer.startWidth = baseThicknessOfWalls * scaleFactor;
+        outerBorderRenderer.endWidth = baseThicknessOfWalls * scaleFactor;
+
+        
+        innerBorderRenderer.startWidth = baseThicknessOfWalls * scaleFactor;
+        innerBorderRenderer.endWidth = baseThicknessOfWalls * scaleFactor;
+    }
+
+    private void RenderTrack(List<Vector2> path)
     {
         trackRenderer.positionCount = path.Count;
 
         for (int i = 0; i < path.Count; i++)
         {
-            trackRenderer.SetPosition(i, new Vector3(path[i].x, path[i].y, 0f));
+            Vector3 scaledPosition = new Vector3(path[i].x, path[i].y, 0f) * scaleFactor; 
+            trackRenderer.SetPosition(i, scaledPosition);
         }
     }
 
-    void CreateEdgeColliders(List<Vector2> centralPath)
+    private void CreateEdgeColliders(List<Vector2> centralPath)
     {
         List<Vector2> outerPath = new List<Vector2>();
         List<Vector2> innerPath = new List<Vector2>();
@@ -71,21 +103,21 @@ public class TrackGenerator : MonoBehaviour
         for (int i = 0; i < centralPath.Count; i++)
         {
             Vector2 current = centralPath[i];
-            Vector2 next = i < centralPath.Count - 1 ? centralPath[i + 1] : centralPath[0]; 
+            Vector2 next = i < centralPath.Count - 1 ? centralPath[i + 1] : centralPath[0];
             Vector2 direction = (next - current).normalized;
-            
+
             Vector2 perpendicular = new Vector2(-direction.y, direction.x);
-     
-            outerPath.Add(current + perpendicular * (trackWidth / 2f));
-            innerPath.Add(current - perpendicular * (trackWidth / 2f));
+
+            
+            outerPath.Add((current + perpendicular * (trackWidth / 2f)) * scaleFactor);
+            innerPath.Add((current - perpendicular * (trackWidth / 2f)) * scaleFactor);
         }
 
-        
         outerEdgeCollider.points = outerPath.ToArray();
         innerEdgeCollider.points = innerPath.ToArray();
     }
 
-    void RenderBorders(List<Vector2> centralPath)
+    private void RenderBorders(List<Vector2> centralPath)
     {
         List<Vector3> outerPath = new List<Vector3>();
         List<Vector3> innerPath = new List<Vector3>();
@@ -93,14 +125,14 @@ public class TrackGenerator : MonoBehaviour
         for (int i = 0; i < centralPath.Count; i++)
         {
             Vector2 current = centralPath[i];
-            Vector2 next = i < centralPath.Count - 1 ? centralPath[i + 1] : centralPath[0]; 
+            Vector2 next = i < centralPath.Count - 1 ? centralPath[i + 1] : centralPath[0];
             Vector2 direction = (next - current).normalized;
 
             Vector2 perpendicular = new Vector2(-direction.y, direction.x);
 
             
-            outerPath.Add(current + perpendicular * (trackWidth / 2f));
-            innerPath.Add(current - perpendicular * (trackWidth / 2f));
+            outerPath.Add((current + perpendicular * (trackWidth / 2f)) * scaleFactor);
+            innerPath.Add((current - perpendicular * (trackWidth / 2f)) * scaleFactor);
         }
 
         outerBorderRenderer.positionCount = outerPath.Count;
@@ -111,5 +143,11 @@ public class TrackGenerator : MonoBehaviour
             outerBorderRenderer.SetPosition(i, outerPath[i]);
             innerBorderRenderer.SetPosition(i, innerPath[i]);
         }
+    }
+
+    public float CalculateCarProgress(Vector2 carPosition)
+    {
+        
+        return 1;
     }
 }
