@@ -72,16 +72,16 @@ public class TrackGenerator : MonoBehaviour
 
     private void UpdateLineRendererThickness()
     {
-        trackRenderer.startWidth = baseThicknessOfCentre * scaleFactor;
-        trackRenderer.endWidth = baseThicknessOfCentre * scaleFactor;
+        trackRenderer.startWidth = baseThicknessOfCentre * scaleFactor * trackWidth;
+        trackRenderer.endWidth = baseThicknessOfCentre * scaleFactor * trackWidth;
 
         
-        outerBorderRenderer.startWidth = baseThicknessOfWalls * scaleFactor;
-        outerBorderRenderer.endWidth = baseThicknessOfWalls * scaleFactor;
+        outerBorderRenderer.startWidth = baseThicknessOfWalls * scaleFactor * trackWidth;
+        outerBorderRenderer.endWidth = baseThicknessOfWalls * scaleFactor * trackWidth;
 
         
-        innerBorderRenderer.startWidth = baseThicknessOfWalls * scaleFactor;
-        innerBorderRenderer.endWidth = baseThicknessOfWalls * scaleFactor;
+        innerBorderRenderer.startWidth = baseThicknessOfWalls * scaleFactor * trackWidth;
+        innerBorderRenderer.endWidth = baseThicknessOfWalls * scaleFactor * trackWidth;
     }
 
     private void RenderTrack(List<Vector2> path)

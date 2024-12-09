@@ -6,7 +6,8 @@ public class CarController : MonoBehaviour
 {
     public float moveSpeed = 5f; 
     public float turnSpeed = 200f; 
-
+    
+    public WallManager wallManager;
     private float moveInput, turnInput;
 
     private Rigidbody2D rb;
@@ -18,6 +19,10 @@ public class CarController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if(wallManager.WasWallHit()){
+            rb.velocity = Vector2.zero;
+            return;
+        }
         GetInputs();
         HandleMovement();
         if(isMoving()) HandleTurning();
@@ -39,4 +44,5 @@ public class CarController : MonoBehaviour
     }
 
     private bool isMoving() => moveInput != 0;
+
 }

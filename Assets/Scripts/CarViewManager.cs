@@ -11,9 +11,11 @@ public class CarViewManager : MonoBehaviour
     public bool wasWallHit;                   
     private List<LineRenderer> lineRenderers = new List<LineRenderer>(); 
 
+    public LayerMask raycastLayerMask; // Specify the layers to include in the raycast
+
     private void Start() {
         distancesToWalls = new float[wallCheckers.Count];
-        for(int i = 0; i < wallCheckers.Count; i++){
+        for (int i = 0; i < wallCheckers.Count; i++) {
             lineRenderers.Add(wallCheckers[i].GetComponent<LineRenderer>());
         }
     }
@@ -27,27 +29,26 @@ public class CarViewManager : MonoBehaviour
 
     public float CalculateDistance(Transform wallChecker) {
         Vector3 rayOrigin = wallChecker.position;
-        Vector3 rayDirection = wallChecker.forward;
+        Vector3 rayDirection = wallChecker.up;
         float distance = raycastDistance;
 
-        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, rayDirection, raycastDistance);
+        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, rayDirection, raycastDistance, raycastLayerMask);
 
-        if (hit.collider != null && hit.collider.CompareTag(targetTag)) {
+        if (hit.collider != null) {
             distance = Vector3.Distance(rayOrigin, hit.point); 
         }
 
         return distance;
     }
 
-    
     public void UpdateLineRenderer(int index) {
         Vector3 rayOrigin = wallCheckers[index].position;
         Vector3 rayDirection = wallCheckers[index].up;
-   
-        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, rayDirection, raycastDistance);
+
+        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, rayDirection, raycastDistance, raycastLayerMask);
         Vector3 targetPoint;
 
-        if (hit.collider != null && hit.collider.CompareTag(targetTag)) {
+        if (hit.collider != null) {
             targetPoint = hit.point;  
         } else {
             targetPoint = rayOrigin + rayDirection * raycastDistance;  
@@ -56,9 +57,6 @@ public class CarViewManager : MonoBehaviour
         LineRenderer lineRenderer = lineRenderers[index];
         lineRenderer.SetPosition(0, rayOrigin);  
         lineRenderer.SetPosition(1, targetPoint);  
-        Debug.Log(rayOrigin);
-        Debug.Log(targetPoint);
-
     }
 
     public float[] getDistanceToWalls() => distancesToWalls;
