@@ -14,131 +14,93 @@ public class AIManager : MonoBehaviour
     public int numberOfAgents = 20;
     public int numberOfAgentsToKeepPerGeneration = 5;
     private Network[] agents;
-    public GameObject carPrefab;
-    public BoxCollider[] checkPoints;
-
     private GameObject[] cars;
-    private WallManager[] wallManagers;
-    // private CarController[] carControllers;
-    private CheckPointManager[] checkpointManagers;
+    public GameObject carPrefab;
+    private CarAIManager[] carAIs;
     public int incrementBetweenTrainingUpdates = 5;
     private int currentFrame;
 
     public int[] actionIndexes;
 
-    public float normalizedCarSpeed;
-    public float normalizedDistanceToNextCheckpoint;
-    public float normalizedDistanceToWallForwards;
-    public float normalizedDistanceToWallRight;
-    public float normalizedDistanceToWallLeft;
-    public float normalizedRotationRelativeToCheckpoint;
-    public float score;
 
+    void Start()
+    {
+        InitNetworks();
+        InitCars();
+        actionIndexes = new int[numberOfAgents];
+    }
 
-    // void Start()
-    // {
-    //     InitNetworks();
-    //     InitCars();
-    //     actionIndexes = new int[numberOfAgents];
-    // }
-    // private void Update() {
-    //     timeSpentInEpisode += Time.deltaTime;
-    // }
+    public void InitNetworks() {
+        agents = new Network[numberOfAgents];
+        for (int i = 0; i < agents.Length; i++)
+        {
+            agents[i] = new Network(layerSizes);
+        }
+    }
 
-    // void FixedUpdate()
-    // {
-    //     normalizedCarSpeed = agents[0].getState().NormalizedCarSpeed;
-    //     normalizedDistanceToNextCheckpoint = agents[0].getState().NormalizedDistanceToNextCheckpoint;
-    //     normalizedDistanceToWallForwards = agents[0].getState().NormalizedDistanceToWallForwards;
-    //     normalizedDistanceToWallRight = agents[0].getState().NormalizedDistanceToWallRight;
-    //     normalizedDistanceToWallLeft = agents[0].getState().NormalizedDistanceToWallLeft;
-    //     normalizedRotationRelativeToCheckpoint = agents[0].getState().NormalizedRotationRelativeToCheckpoint;
-    //     score = agents[0].getScore(checkpointManagers[0].getTotalCheckpoints());
-
+    public void InitCars()
+    {
+        cars = new GameObject[numberOfAgents];
+        carAIs = new CarAIManager[numberOfAgents];
         
-    //     if (shouldUpdateOnThisFrame())
-    //     {
-    //         SetEnvironmentsValues();
-    //         FindActionsForAllAgents();
-    //         if (didEpisodeEnd())
-    //         {
-    //             NewEpisode();
-    //         }
-    //     }
-    // }
+        for(int i = 0; i < numberOfAgents; i++)
+        {
+            cars[i] = Instantiate(carPrefab);
+            carAIs[i] = cars[i].GetComponent<CarAIManager>();
 
-    // private bool shouldUpdateOnThisFrame()
-    // {
-    //     currentFrame++;
-    //     if (currentFrame > incrementBetweenTrainingUpdates) currentFrame = 0;
-    //     return currentFrame == incrementBetweenTrainingUpdates;
-    // }
+        }
+    }
+    private void Update() {
+        timeSpentInEpisode += Time.deltaTime;
+    }
 
-    // public void InitCars()
-    // {
-    //     cars = new GameObject[numberOfAgents];
-    //     wallManagers = new WallManager[numberOfAgents];
-    //     carControllers = new CarController[numberOfAgents];
-    //     checkpointManagers = new CheckPointManager[numberOfAgents];
-    //     for(int i = 0; i < numberOfAgents; i++)
-    //     {
-    //         cars[i] = Instantiate(carPrefab);
-    //         cars[i].GetComponent<CheckPointManager>().setCheckPoints(checkPoints);
-    //         wallManagers[i] = cars[i].GetComponent<WallManager>();
-    //         carControllers[i] = cars[i].GetComponent<CarController>();
-    //         checkpointManagers[i] = cars[i].GetComponent<CheckPointManager>();
+    void FixedUpdate()
+    {
+        if (shouldUpdateOnThisFrame())
+        {
+            SetEnvironmentsValues();
+            FindActionsForAllAgents();
+            if (didEpisodeEnd())
+            {
+                NewEpisode();
+            }
+        }
+    }
 
-    //     }
-    // }
+    private bool shouldUpdateOnThisFrame()
+    {
+        currentFrame++;
+        if (currentFrame > incrementBetweenTrainingUpdates) currentFrame = 0;
+        return currentFrame == incrementBetweenTrainingUpdates;
+    }
 
-    // public void InitNetworks() {
-    //     agents = new Network[numberOfAgents];
-    //     for (int i = 0; i < agents.Length; i++)
-    //     {
-    //         agents[i] = new Network(layerSizes);
-    //     }
-    // }
+    public void NewEpisode(){
+        // ModifyAllAgents();
+        for(int i = 0; i < numberOfAgents; i++)
+        {
+            Destroy(cars[i]);
+        }
+        InitCars();
+    }
 
-    // public void NewEpisode(){
-    //     ModifyAllAgents();
-    //     for(int i = 0; i < numberOfAgents; i++)
-    //     {
-    //         Destroy(cars[i]);
-    //     }
-    //     InitCars();
-    // }
+    public void FindActionsForAllAgents()
+    {
+        for (int i = 0; i < numberOfAgents; i++)
+        {
+            if (!carAIs[i].WasWallHit())
+            {
+                
+            } 
+        }
+    }
 
-    // public void FindActionsForAllAgents()
-    // {
-    //     for (int i = 0; i < numberOfAgents; i++)
-    //     {
-    //         carControllers[i].resetActionSpace();
-
-    //         if (!wallManagers[i].WasWallHit())
-    //         {
-    //             actionIndexes[i] = agents[i].GetChosenActionIndex();
-    //             carControllers[i].setActionSpace(actionIndexes[i]);
-    //         }
-            
-    //     }
-    // }
-
-    // public void SetEnvironmentsValues()
-    // {
-    //     for(int i = 0; i < numberOfAgents; i++)
-    //     {
-    //         agents[i].setValues(
-    //             carControllers[i].getMaxCarSpeed(),
-    //             carControllers[i].getCurrentCarSpeed(),
-    //             checkpointManagers[i].getDistanceBetweenCheckPoints(),
-    //             checkpointManagers[i].getCarsDistanceToNextCheckPoint(),
-    //             checkpointManagers[i].getRotationRelativeToNextCheckpoint(),
-    //             wallManagers[i].getCarViewDistanceToWall(),
-    //             wallManagers[i].getDistanceToLeftWall(),
-    //             wallManagers[i].getDistanceToRightWall(),
-    //             wallManagers[i].getDistanceToForwardWall());
-    //     }
-    // }
+    public void SetEnvironmentsValues()
+    {
+        for(int i = 0; i < numberOfAgents; i++)
+        {
+            agents[i].setState(carAIs[i].getState());
+        }
+    }
     // public void ModifyAllAgents()
     // {
     //     MultiplyAgents(getBestAgentIndexes());
@@ -197,18 +159,18 @@ public class AIManager : MonoBehaviour
     // }
 
 
-    // private bool didEpisodeEnd()
-    // {
-    //     if(timeSpentInEpisode > maxTimePerEpisode){
-    //         timeSpentInEpisode = 0;
-    //         return true;
-    //     }
-    //     int numberOfCarsThatHitWall = 0;
-    //     foreach (WallManager wallManager in wallManagers)
-    //     {
-    //         if (wallManager.WasWallHit()) numberOfCarsThatHitWall++;
-    //     }
-    //     return numberOfCarsThatHitWall == numberOfAgents;
-    // }
+    private bool didEpisodeEnd()
+    {
+        if(timeSpentInEpisode > maxTimePerEpisode){
+            timeSpentInEpisode = 0;
+            return true;
+        }
+        int numberOfCarsThatHitWall = 0;
+        foreach (CarAIManager carAI in carAIs)
+        {
+            if (carAI.WasWallHit()) numberOfCarsThatHitWall++;
+        }
+        return numberOfCarsThatHitWall == numberOfAgents;
+    }
 
 }

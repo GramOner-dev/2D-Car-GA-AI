@@ -641,6 +641,7 @@ MonoBehaviour:
   moveSpeed: 10
   turnSpeed: 150
   wallManager: {fileID: 8977202829539800852}
+  doesHumanControl: 0
 --- !u!114 &8977202829539800849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -681,6 +682,7 @@ GameObject:
   - component: {fileID: 8977202829539800849}
   - component: {fileID: 8977202829539800852}
   - component: {fileID: 918261521}
+  - component: {fileID: 8977202829539800853}
   m_Layer: 0
   m_Name: Car
   m_TagString: Untagged
@@ -723,6 +725,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetTag: Wall
   wasWallHit: 0
+--- !u!114 &8977202829539800853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977202829539800850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13c273d48971e49d184c7317f93dc0d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 8977202829539800848}
+  carView: {fileID: 8977202829539800849}
+  wallManager: {fileID: 8977202829539800852}
+  carFitness: {fileID: 918261521}
 --- !u!4 &8977202829539800854
 Transform:
   m_ObjectHideFlags: 0
@@ -735,7 +753,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8977202831083184469}
-  - {fileID: 8977202831337542640}
   - {fileID: 8977202829829062752}
   - {fileID: 8977202831283042854}
   m_Father: {fileID: 0}
@@ -886,7 +903,7 @@ Transform:
   - {fileID: 8977202829950510935}
   - {fileID: 8977202830480869588}
   m_Father: {fileID: 8977202829539800854}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8977202829829062755
 GameObject:
@@ -1598,7 +1615,7 @@ Transform:
   - {fileID: 8977202829791062218}
   - {fileID: 8977202830829358793}
   m_Father: {fileID: 8977202829539800854}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8977202831285019520
 SpriteRenderer:
@@ -1789,12 +1806,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8977202831337542541}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 8977202829539800854}
-  m_RootOrder: 1
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!81 &8977202831337542642
 AudioListener:

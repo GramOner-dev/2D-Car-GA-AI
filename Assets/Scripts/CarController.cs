@@ -11,6 +11,7 @@ public class CarController : MonoBehaviour
     private float moveInput, turnInput;
 
     private Rigidbody2D rb;
+    public bool doesHumanControl;
 
     void Start()
     {
@@ -23,13 +24,18 @@ public class CarController : MonoBehaviour
             rb.velocity = Vector2.zero; 
             return;
         }
-        GetInputs();
+        if(doesHumanControl) GetInputs();
         HandleMovement();
         if(isMoving()) HandleTurning();
     }
     private void GetInputs(){
         moveInput = Input.GetAxis("Vertical"); 
         turnInput = moveInput >= 0 ? Input.GetAxis("Horizontal") : - Input.GetAxis("Horizontal"); 
+    }
+
+    public void setInputs(float turnInput, float moveInput){
+        this.turnInput = turnInput; 
+        this.moveInput = moveInput;
     }
 
     private void HandleMovement()

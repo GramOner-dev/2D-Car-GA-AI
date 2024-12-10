@@ -51,6 +51,10 @@ public class Network
     {
         return FindBestActionIndex(GetQValues());
     }
+
+    public void setState(State currentState){
+        this.currentState = currentState;
+    }
 }
 
 public class Layer

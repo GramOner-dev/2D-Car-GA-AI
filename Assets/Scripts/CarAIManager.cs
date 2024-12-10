@@ -14,7 +14,7 @@ public class CarAIManager : MonoBehaviour
     private void Update() {
         currentState.setState(carView.getDistanceToWalls(), carView.getCarViewDistanceToWalls(), wallManager.WasWallHit());
     }
-
+    public State getState() => currentState;
     public bool WasWallHit() => wallManager.WasWallHit();
     public float getFitness() => carFitness.getFitness();
 
