@@ -24,6 +24,15 @@ public class TrackGenerator : MonoBehaviour
 
     public float scaleFactor = 1f; 
 
+    public GameObject pathPoint;
+    public List<Vector2> getCentralPathPoints(){ 
+        List<Vector2> scaledPoints = new List<Vector2>();
+        for(int i = 0; i < centralPath.Count; i++){
+            scaledPoints.Add(centralPath[i] * scaleFactor);
+        }
+        return scaledPoints;
+    }
+
     void Start()
     {
         noiseOffset = Random.Range(0f, 1000f);
@@ -33,6 +42,11 @@ public class TrackGenerator : MonoBehaviour
     void GenerateTrack()
     {
         centralPath = GenerateCentralPath();
+        foreach(Vector2 point in centralPath){
+            Vector3 pos = new Vector3(point.x, point.y, 0);
+            pos *= scaleFactor;
+            Instantiate(pathPoint, pos, Quaternion.identity);
+        }
         totalTrackLength = CalculateTotalTrackLength(centralPath);
         UpdateLineRendererThickness(); 
         RenderTrack(centralPath);
@@ -145,9 +159,5 @@ public class TrackGenerator : MonoBehaviour
         }
     }
 
-    public float CalculateCarProgress(Vector2 carPosition)
-    {
-        
-        return 1;
-    }
+    
 }

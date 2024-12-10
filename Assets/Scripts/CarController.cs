@@ -20,7 +20,7 @@ public class CarController : MonoBehaviour
     void FixedUpdate()
     {
         if(wallManager.WasWallHit()){
-            rb.velocity = Vector2.zero;
+            rb.velocity = Vector2.zero; 
             return;
         }
         GetInputs();
