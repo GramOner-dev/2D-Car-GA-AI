@@ -4,19 +4,7 @@ using UnityEngine;
 
 public class Network
 {
-    public float maxCarSpeed;
-    public float carSpeed;
-    public float distanceFromLastCheckPointToNext;
-    public float distanceToNextCheckpoint;
-    public float rotationRelativeToNextCheckpoint;
-    public float carViewDistanceToWall;
-    public float distanceToWallForwards;
-    public float distanceToWallRight;
-    public float distanceToWallLeft;
-    public int currentCheckpoint;
-
     private State currentState;
-
 
     public Layer[] layers;
     public Network(int[] layerSizes)
@@ -31,9 +19,9 @@ public class Network
         }
     }
 
-    public float[] GetQValues(float[] inputs)
+    public float[] GetQValues()
     {
-        float[] currentOutput = inputs;
+        float[] currentOutput = currentState.createInputVector();
         for (int i = 0; i < layers.Length; i++)
         {
             bool isOutputLayer = i == layers.Length - 1;
@@ -58,39 +46,11 @@ public class Network
             layer.RandomlyAdjustNeuronWeightsAndBiases(weightAdjustmentMultiplier);
         }
     }
-    public float getScore(int currentCheckpoint)
-    {
-        float score = currentCheckpoint;
-        score += (1 - currentState.NormalizedDistanceToNextCheckpoint);
-        return score;
-    }
 
     public int GetChosenActionIndex()
     {
-        setCurrentState();
-        float[] inputs = currentState.createInputVector();
-        float[] QValues = GetQValues(inputs);
-        return FindBestActionIndex(QValues);
+        return FindBestActionIndex(GetQValues());
     }
-
-    public void setValues(float maxCarSpeed, float carSpeed, float distanceFromLastCheckPointToNext, float distanceToNextCheckpoint, float rotationRelativeToNextCheckpoint, float carViewDistanceToWall, float distanceToLeftWall, float distanceToRightWall, float distanceToForwardWall)
-    {
-        this.maxCarSpeed = maxCarSpeed;
-        this.carSpeed = carSpeed;
-        this.distanceFromLastCheckPointToNext = distanceFromLastCheckPointToNext;
-        this.distanceToNextCheckpoint = distanceToNextCheckpoint;
-        this.rotationRelativeToNextCheckpoint = rotationRelativeToNextCheckpoint;
-        this.carViewDistanceToWall = carViewDistanceToWall;
-        this.distanceToWallLeft = distanceToLeftWall;
-        this.distanceToWallRight = distanceToRightWall;
-        this.distanceToWallForwards = distanceToForwardWall;
-    }
-
-    private void setCurrentState()
-    {
-        currentState = new State(carSpeed, maxCarSpeed, distanceFromLastCheckPointToNext, distanceToNextCheckpoint, rotationRelativeToNextCheckpoint, carViewDistanceToWall, distanceToWallForwards, distanceToWallRight, distanceToWallLeft);
-    }
-    public State getState() => currentState;
 }
 
 public class Layer

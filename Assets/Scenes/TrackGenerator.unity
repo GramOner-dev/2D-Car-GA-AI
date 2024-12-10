@@ -288,7 +288,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   distanceAlongTrack: 0
-  track: {fileID: 1474950900}
+  pathPoints: []
+  trackGen: {fileID: 1474950900}
 --- !u!61 &918261526
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -456,6 +457,7 @@ MonoBehaviour:
   innerEdgeCollider: {fileID: 2390150}
   centralPath: []
   scaleFactor: 3
+  pathPoint: {fileID: 703069608677239391, guid: ccf88b976a7394601a7f4236a7e37bb6, type: 3}
 --- !u!4 &1474950901
 Transform:
   m_ObjectHideFlags: 0
