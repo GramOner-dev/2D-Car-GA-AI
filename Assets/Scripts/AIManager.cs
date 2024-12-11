@@ -17,6 +17,7 @@ public class AIManager : MonoBehaviour
     private GameObject[] cars;
     public GameObject carPrefab;
     private CarAIManager[] carAIs;
+    public TrackGenerator trackGen;
     public int incrementBetweenTrainingUpdates = 5;
     private int currentFrame;
     public float crossOverProbability = 0.6f;
@@ -48,6 +49,7 @@ public class AIManager : MonoBehaviour
         for (int i = 0; i < numberOfAgents; i++)
         {
             cars[i] = Instantiate(carPrefab);
+            cars[i].GetComponent<CarFitnessCalculator>().setTrackGenerator(trackGen);
             carAIs[i] = cars[i].GetComponent<CarAIManager>();
 
         }

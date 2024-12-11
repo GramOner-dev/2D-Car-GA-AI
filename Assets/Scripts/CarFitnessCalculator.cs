@@ -25,6 +25,8 @@ public class CarFitnessCalculator : MonoBehaviour
         }
         return closestPointIndex; 
     }
-
+    public void setTrackGenerator(TrackGenerator trackGen){
+        this.trackGen = trackGen;
+    }
     public float getFitness() => distanceAlongTrack;
 }
