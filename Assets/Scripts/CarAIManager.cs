@@ -18,6 +18,9 @@ public class CarAIManager : MonoBehaviour
     public bool WasWallHit() => wallManager.WasWallHit();
     public float getFitness() => carFitness.getFitness();
 
+    public void setCarInputs(float[] QValues)
+    {
+        controller.setInputs(QValues[0], QValues[1]);
+    }
 
 }
-

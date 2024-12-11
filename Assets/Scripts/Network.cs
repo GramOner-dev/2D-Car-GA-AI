@@ -41,7 +41,7 @@ public class Network
     }
     public void RandomlyAdjustAllWeightsAndBiases(float weightAdjustmentMultiplier)
     {
-        foreach(Layer layer in layers)
+        foreach (Layer layer in layers)
         {
             layer.RandomlyAdjustNeuronWeightsAndBiases(weightAdjustmentMultiplier);
         }
@@ -54,6 +54,24 @@ public class Network
 
     public void setState(State currentState){
         this.currentState = currentState;
+    }
+
+    public void setWeights(float[][][] weights)
+    {
+        for(int i = 0; i < weights.Length; i++)
+        {
+            layers[i].setWeights(weights[i]);
+        }
+    }
+
+    public float[][][] getWeights()
+    {
+        float[][][] weights = new float[layers.Length][][];
+        for(int i = 0; i < layers.Length; i++)
+        {
+            weights[i] = layers[i].getWeights();
+        }
+        return weights;
     }
 }
 
@@ -80,9 +98,27 @@ public class Layer
         return outputs;
     }
 
+    public void setWeights(float[][] weights)
+    {
+        for(int i = 0; i < neurons.Length; i++)
+        {
+            neurons[i].setWeights(weights[i]);
+        }
+    }
+
+    public float[][] getWeights()
+    {
+        float[][] weights = new float[neurons.Length][];
+        for(int i = 0; i < neurons.Length; i++)
+        {
+            weights[i] = neurons[i].getWeights();
+        }
+        return weights;
+    }
+
     public void RandomlyAdjustNeuronWeightsAndBiases(float weightAdjustmentMultiplier)
     {
-        foreach(Neuron neuron in neurons)
+        foreach (Neuron neuron in neurons)
         {
             neuron.RandomlyAdjustWeightsAndBias(weightAdjustmentMultiplier);
         }
@@ -123,11 +159,18 @@ public class Neuron
         return value > 0 ? value : value * negativeGradient;
     }
 
+    public void setWeights(float[] weights)
+    {
+        this.weights = weights;
+    }
+
+    public float[] getWeights() => weights;
+
     public void RandomlyAdjustWeightsAndBias(float weightAdjustmentMultiplier)
     {
-        for(int i = 0; i < weights.Length; i++)
+        for (int i = 0; i < weights.Length; i++)
         {
-            weights[i] += RandomFloatInRange(-1, 1) * weightAdjustmentMultiplier  * RandomFloatInRange(0.5f, 2f);;
+            weights[i] += RandomFloatInRange(-1, 1) * weightAdjustmentMultiplier * RandomFloatInRange(0.5f, 2f); ;
         }
     }
 }
