@@ -34,8 +34,8 @@ public class CarController : MonoBehaviour
     }
 
     public void setInputs(float turnInput, float moveInput){
-        this.turnInput = turnInput; 
-        this.moveInput = moveInput;
+        this.turnInput = Mathf.Clamp(turnInput, -1, 1); 
+        this.moveInput = Mathf.Clamp(moveInput, -1, 1);
     }
 
     private void HandleMovement()

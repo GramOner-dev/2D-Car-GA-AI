@@ -22,15 +22,19 @@ public class AIManager : MonoBehaviour
     private int currentFrame;
     public float crossOverProbability = 0.6f;
     public float mutationProbability = 0.6f;
+    // public MultiDimensionalFloat[] firstLayerWeights;
+    // public MultiDimensionalFloat[] secondLayerWeights;
+    // public MultiDimensionalFloat[] thirdLayerWeights;
+    // public float[] aaa;
+    public Vector2[] QValuesOfAgents;
 
-    public int[] actionIndexes;
 
 
     void Start()
     {
+        QValuesOfAgents = new Vector2[numberOfAgents];
         InitNetworks();
         InitCars();
-        actionIndexes = new int[numberOfAgents];
     }
 
     public void InitNetworks() {
@@ -53,6 +57,27 @@ public class AIManager : MonoBehaviour
             carAIs[i] = cars[i].GetComponent<CarAIManager>();
 
         }
+        // float[][][] weights = agents[0].getWeights();
+        
+        
+        // firstLayerWeights = new MultiDimensionalFloat[weights[0].Length];
+        // secondLayerWeights = new MultiDimensionalFloat[weights[1].Length]; 
+        // thirdLayerWeights = new MultiDimensionalFloat[weights[2].Length];
+
+        // for(int i = 0; i < weights[0].Length; i++){
+        //     firstLayerWeights[i].setArray(weights[0][i]);
+        // }
+        // for(int i = 0; i < weights[1].Length; i++){
+        //     secondLayerWeights[i].setArray(weights[1][i]);
+        // }
+        // for(int i = 0; i < weights[2].Length; i++){
+        //     thirdLayerWeights[i].setArray(weights[2][i]);
+        // }
+        // aaa = weights[0][4];
+
+
+
+
     }
     private void Update() {
         timeSpentInEpisode += Time.deltaTime;
@@ -93,7 +118,9 @@ public class AIManager : MonoBehaviour
         {
             if (!carAIs[i].WasWallHit())
             {
-                carAIs[i].setCarInputs(agents[i].GetQValues());
+                float[] QValues = agents[i].GetQValues();
+                QValuesOfAgents[i] = new Vector2(QValues[0], QValues[1]);
+                carAIs[i].setCarInputs(QValues);
             }
         }
     }
@@ -262,3 +289,12 @@ public static class Sort
         return merged;
     }
 }
+
+[System.Serializable]
+ public class MultiDimensionalFloat
+ {
+     public float[] array;
+     public void setArray(float[] array){
+        this.array = array;
+     }
+ }
