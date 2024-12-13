@@ -149,14 +149,24 @@ public class Neuron
             sum += inputs[i] * weights[i];
         }
         sum += bias;
-        return isOutputLayer ? sum : ActivationFunction(sum);
+        return isOutputLayer ? Tanh(sum) : Sigmoid(sum);
     }
 
 
-    private float ActivationFunction(float value)
+    private float LeakyReLU(float value)
     {
         float negativeGradient = 0.01f;
         return value > 0 ? value : value * negativeGradient;
+    }
+
+    private float Tanh(float x)
+    {
+        return (2f / (1f + (float)System.Math.Exp(-2f * x))) - 1f;
+    }
+
+    public float Sigmoid(float x)
+    {
+        return 1f / (1f + (float)System.Math.Exp(-x));
     }
 
     public void setWeights(float[] weights)
@@ -167,10 +177,11 @@ public class Neuron
     public float[] getWeights() => weights;
 
     public void RandomlyAdjustWeightsAndBias(float weightAdjustmentMultiplier)
+{
+    for (int i = 0; i < weights.Length; i++)
     {
-        for (int i = 0; i < weights.Length; i++)
-        {
-            weights[i] += RandomFloatInRange(-1, 1) * weightAdjustmentMultiplier * RandomFloatInRange(0.5f, 2f); ;
-        }
+        weights[i] += RandomFloatInRange(-1, 1) * weightAdjustmentMultiplier;
     }
+    bias += RandomFloatInRange(-1, 1) * weightAdjustmentMultiplier; // Adjust bias too
+}
 }

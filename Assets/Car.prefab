@@ -1016,7 +1016,7 @@ MonoBehaviour:
   - {fileID: 5510377183858880857}
   - {fileID: 5510377182749759322}
   distancesToWalls: []
-  raycastDistance: 7
+  raycastDistance: 12
   wasWallHit: 0
   raycastLayerMask:
     serializedVersion: 2

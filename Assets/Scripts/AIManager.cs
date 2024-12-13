@@ -12,7 +12,7 @@ public class AIManager : MonoBehaviour
 
     public float weightAdjustmentMultiplier = 0.05f;
     public int numberOfAgents = 20;
-    public int numberOfAgentsToKeepPerGeneration = 5;
+    public int numberOfAgentsToKeepPerGeneration = 20;
     private Network[] agents;
     private GameObject[] cars;
     public GameObject carPrefab;
@@ -57,27 +57,6 @@ public class AIManager : MonoBehaviour
             carAIs[i] = cars[i].GetComponent<CarAIManager>();
 
         }
-        // float[][][] weights = agents[0].getWeights();
-        
-        
-        // firstLayerWeights = new MultiDimensionalFloat[weights[0].Length];
-        // secondLayerWeights = new MultiDimensionalFloat[weights[1].Length]; 
-        // thirdLayerWeights = new MultiDimensionalFloat[weights[2].Length];
-
-        // for(int i = 0; i < weights[0].Length; i++){
-        //     firstLayerWeights[i].setArray(weights[0][i]);
-        // }
-        // for(int i = 0; i < weights[1].Length; i++){
-        //     secondLayerWeights[i].setArray(weights[1][i]);
-        // }
-        // for(int i = 0; i < weights[2].Length; i++){
-        //     thirdLayerWeights[i].setArray(weights[2][i]);
-        // }
-        // aaa = weights[0][4];
-
-
-
-
     }
     private void Update() {
         timeSpentInEpisode += Time.deltaTime;
@@ -142,7 +121,7 @@ public class AIManager : MonoBehaviour
     public void DoGeneticModifications(int[] bestAgentIndexes)
     {
         Network[] agentsToKeepUnchanged = new Network[bestAgentIndexes.Length];
-        for (int i = bestAgentIndexes.Length; i < agents.Length; i++)
+        for (int i = bestAgentIndexes.Length; i < agents.Length - 1; i++)
         {
             if (shouldCrossOver())
             {
@@ -160,20 +139,49 @@ public class AIManager : MonoBehaviour
 
     public float[][][] getCrossedOverWeights(float[][][] weightsToCrossOver, float[][][] weightsToCrossOverWith)
     {
-        for(int layerIndex = 0; layerIndex < weightsToCrossOver.GetLength(0); layerIndex++)
+        float[][][] newWeights = CreateDeepCopy(weightsToCrossOver);
+
+        for (int layerIndex = 0; layerIndex < weightsToCrossOver.GetLength(0); layerIndex++)
         {
-            for (int neuronIndex = 0; neuronIndex < weightsToCrossOver.GetLength(0); neuronIndex++)
+            for (int neuronIndex = 0; neuronIndex < weightsToCrossOver[layerIndex].Length; neuronIndex++)
             {
-                for (int weightIndex = 0; weightIndex < weightsToCrossOver.GetLength(0); weightIndex++)
+                for (int weightIndex = 0; weightIndex < weightsToCrossOver[layerIndex][neuronIndex].Length; weightIndex++)
                 {
                     if (randomTrueOrFalse())
                     {
-                        weightsToCrossOver[layerIndex][neuronIndex][weightIndex] = weightsToCrossOverWith[layerIndex][neuronIndex][weightIndex];
+                        newWeights[layerIndex][neuronIndex][weightIndex] = weightsToCrossOverWith[layerIndex][neuronIndex][weightIndex];
                     }
                 }
             }
         }
-        return weightsToCrossOver;
+
+        return newWeights;
+    }
+
+   private float[][][] CreateDeepCopy(float[][][] original)
+    {
+        // Initialize the top-level array
+        float[][][] copy = new float[original.Length][][];
+
+        for (int i = 0; i < original.Length; i++)
+        {
+            // Initialize the second-level arrays
+            copy[i] = new float[original[i].Length][];
+            
+            for (int j = 0; j < original[i].Length; j++)
+            {
+                // Initialize the third-level arrays
+                copy[i][j] = new float[original[i][j].Length];
+                
+                // Copy the content of the array
+                for (int k = 0; k < original[i][j].Length; k++)
+                {
+                    copy[i][j][k] = original[i][j][k];
+                }
+            }
+        }
+
+        return copy;
     }
 
     public int RandomIntInRange(int min, int max)
@@ -206,9 +214,12 @@ public class AIManager : MonoBehaviour
         {
             bestAgents[i] = agents[bestAgentIndexes[i]];
         }
-        for (int i = 0; i < agents.Length; i++)
+        for (int i = 0; i < agents.Length; i+=bestAgents.Length)
         {
-            agents[i] = bestAgents[i % bestAgents.Length];
+            for (int j = 0; j < bestAgents.Length; j++){
+                agents[i] = bestAgents[j];
+            }
+
         }
     }
 
