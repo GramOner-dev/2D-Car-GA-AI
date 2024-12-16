@@ -306,8 +306,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   layerSizes: 05000000050000000300000002000000
   currentIteration: 0
-  maxTimePerEpisode: 50
-  weightAdjustmentMultiplier: 0.05
+  maxTimePerEpisode: 5
+  weightAdjustmentMultiplier: 1
   numberOfAgents: 20
   numberOfAgentsToKeepPerGeneration: 5
   carPrefab: {fileID: 5510377183607615105, guid: 029a1d06e7e8c46beadb0c72a701f298, type: 3}
