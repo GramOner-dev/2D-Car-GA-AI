@@ -125,7 +125,7 @@ public class AIManager : MonoBehaviour
         {
             if (shouldCrossOver())
             {
-                int randomAgent = RandomIntInRange(numberOfAgentsToKeepPerGeneration, numberOfAgents);
+                int randomAgent = RandomIntInRange(numberOfAgentsToKeepPerGeneration, numberOfAgents - 1);
                 float[][][] crossedOverWeights = getCrossedOverWeights(agents[i].getWeights(), agents[randomAgent].getWeights());
                 agents[i].setWeights(crossedOverWeights);
             }
@@ -139,7 +139,7 @@ public class AIManager : MonoBehaviour
 
     public float[][][] getCrossedOverWeights(float[][][] weightsToCrossOver, float[][][] weightsToCrossOverWith)
     {
-        float[][][] newWeights = CreateDeepCopy(weightsToCrossOver);
+        float[][][] newWeights = weightsToCrossOver;
 
         for (int layerIndex = 0; layerIndex < weightsToCrossOver.GetLength(0); layerIndex++)
         {
@@ -156,32 +156,6 @@ public class AIManager : MonoBehaviour
         }
 
         return newWeights;
-    }
-
-   private float[][][] CreateDeepCopy(float[][][] original)
-    {
-        // Initialize the top-level array
-        float[][][] copy = new float[original.Length][][];
-
-        for (int i = 0; i < original.Length; i++)
-        {
-            // Initialize the second-level arrays
-            copy[i] = new float[original[i].Length][];
-            
-            for (int j = 0; j < original[i].Length; j++)
-            {
-                // Initialize the third-level arrays
-                copy[i][j] = new float[original[i][j].Length];
-                
-                // Copy the content of the array
-                for (int k = 0; k < original[i][j].Length; k++)
-                {
-                    copy[i][j][k] = original[i][j][k];
-                }
-            }
-        }
-
-        return copy;
     }
 
     public int RandomIntInRange(int min, int max)
