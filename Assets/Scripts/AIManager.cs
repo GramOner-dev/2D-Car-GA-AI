@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AIManager : MonoBehaviour
 {
-    public int[] layerSizes = new int[] { 5, 5, 3, 2 };
+    public int[] layerSizes = new int[] { 5, 5, 3, 3 };
 
     public int currentIteration = 0;
     public float maxTimePerEpisode = 50f;
@@ -22,10 +22,6 @@ public class AIManager : MonoBehaviour
     private int currentFrame;
     public float crossOverProbability = 0.6f;
     public float mutationProbability = 0.6f;
-    // public MultiDimensionalFloat[] firstLayerWeights;
-    // public MultiDimensionalFloat[] secondLayerWeights;
-    // public MultiDimensionalFloat[] thirdLayerWeights;
-    // public float[] aaa;
     public Vector2[] QValuesOfAgents;
 
 
@@ -274,12 +270,3 @@ public static class Sort
         return merged;
     }
 }
-
-[System.Serializable]
- public class MultiDimensionalFloat
- {
-     public float[] array;
-     public void setArray(float[] array){
-        this.array = array;
-     }
- }

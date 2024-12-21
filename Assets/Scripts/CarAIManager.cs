@@ -20,7 +20,10 @@ public class CarAIManager : MonoBehaviour
 
     public void setCarInputs(float[] QValues)
     {
-        controller.setInputs(QValues[0], QValues[1]);
+        controller.setInputs(doTurnLeft(QValues), doTurnRight(QValues), QValues[0]);
     }
+
+    public bool doTurnLeft(float[] QValues) => QValues[1] > QValues[2] && QValues[1] > 0;
+    public bool doTurnRight(float[] QValues) => QValues[2] > QValues[1] && QValues[2] > 0;
 
 }

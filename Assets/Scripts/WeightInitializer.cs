@@ -36,7 +36,7 @@ class WeightInitializer
         float[] initializedWeights = new float[numberOfInputs];
         for (int i = 0; i < numberOfInputs; i++)
         {
-            initializedWeights[i] = HeInitialization(numberOfInputs);
+            initializedWeights[i] = HeInitialization(numberOfInputs) / 4;
         }
         return initializedWeights;
     }
