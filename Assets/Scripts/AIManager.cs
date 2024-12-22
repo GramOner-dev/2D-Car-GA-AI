@@ -110,6 +110,7 @@ public class AIManager : MonoBehaviour
     public void ModifyAllAgents()
     {
         int[] bestAgentIndexes = getBestAgentIndexes();
+        foreach(int index in bestAgentIndexes) Debug.Log(index);
         MultiplyAgents(bestAgentIndexes);
         DoGeneticModifications(bestAgentIndexes);
     }
@@ -121,7 +122,7 @@ public class AIManager : MonoBehaviour
         {
             if (shouldCrossOver())
             {
-                int randomAgent = RandomIntInRange(numberOfAgentsToKeepPerGeneration, numberOfAgents - 1);
+                int randomAgent = UnityEngine.Random.Range(numberOfAgentsToKeepPerGeneration, numberOfAgents - 1);
                 float[][][] crossedOverWeights = getCrossedOverWeights(agents[i].getWeights(), agents[randomAgent].getWeights());
                 agents[i].setWeights(crossedOverWeights);
             }
@@ -187,7 +188,9 @@ public class AIManager : MonoBehaviour
         for (int i = 0; i < agents.Length; i+=bestAgents.Length)
         {
             for (int j = 0; j < bestAgents.Length; j++){
-                agents[i] = bestAgents[j];
+
+                if(i+j > numberOfAgents - 1) return;
+                agents[i + j] = bestAgents[j];
             }
 
         }
@@ -195,30 +198,35 @@ public class AIManager : MonoBehaviour
 
     public int[] getBestAgentIndexes()
     {
+
         int[] bestAgentIndexes = new int[numberOfAgentsToKeepPerGeneration];
         float[] agentScores = new float[numberOfAgents];
+        bool[] selected = new bool[numberOfAgents]; // To track if an agent has already been selected
+
+        // Populate agentScores with fitness values
         for (int i = 0; i < agents.Length; i++)
         {
             agentScores[i] = carAIs[i].getFitness();
         }
-        float[] sortedAgentScores = Sort.MergeSort(agentScores, 0, agentScores.Length - 1);
-        float[] bestScores = new float[numberOfAgentsToKeepPerGeneration];
+
+        // Find the top scores and their indexes
         for (int i = 0; i < numberOfAgentsToKeepPerGeneration; i++)
         {
-            bestScores[i] = sortedAgentScores[sortedAgentScores.Length - 1 - i];
-        }
+            float maxScore = float.MinValue;
+            int maxIndex = -1;
 
-        for (int i = 0; i < bestAgentIndexes.Length; i++)
-        {
             for (int j = 0; j < agentScores.Length; j++)
             {
-                if (bestScores[i] == agentScores[j])
+                if (!selected[j] && agentScores[j] > maxScore)
                 {
-                    bestAgentIndexes[i] = j;
-                    break;
+                    maxScore = agentScores[j];
+                    maxIndex = j;
                 }
             }
+            bestAgentIndexes[i] = maxIndex;
+            selected[maxIndex] = true; // Mark this index as selected
         }
+
         return bestAgentIndexes;
     }
 

@@ -27,8 +27,7 @@ class WeightInitializer
 
     public static float RandomFloatInRange(float min, float max)
     {
-        System.Random rand = new System.Random();
-        return (float)(min + rand.NextDouble() * (max - min));
+        return (float)(min + random.NextDouble() * (max - min));
     }
 
     public static float[] GetRandomWeights(int numberOfInputs)
@@ -36,7 +35,9 @@ class WeightInitializer
         float[] initializedWeights = new float[numberOfInputs];
         for (int i = 0; i < numberOfInputs; i++)
         {
-            initializedWeights[i] = HeInitialization(numberOfInputs) / 4;
+            // initializedWeights[i] = HeInitialization(numberOfInputs) / 8;
+            initializedWeights[i] = UnityEngine.Random.Range(-1.0f, 1f);
+
         }
         return initializedWeights;
     }

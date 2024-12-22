@@ -180,8 +180,8 @@ public class Neuron
     {
         for (int i = 0; i < weights.Length; i++)
         {
-            weights[i] += RandomFloatInRange(-1, 1) * weightAdjustmentMultiplier;
+            weights[i] += UnityEngine.Random.Range(-1, 1) * weightAdjustmentMultiplier;
         }
-        bias += RandomFloatInRange(-1, 1) * weightAdjustmentMultiplier; // Adjust bias too
+        bias += UnityEngine.Random.Range(-1, 1) * weightAdjustmentMultiplier; // Adjust bias too
     }
 }

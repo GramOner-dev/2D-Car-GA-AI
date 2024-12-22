@@ -33,11 +33,9 @@ public class CarController : MonoBehaviour
         turnInput = moveInput >= 0 ? Input.GetAxis("Horizontal") : - Input.GetAxis("Horizontal"); 
     }
 
-    public void setInputs(bool turnLeft, bool turnRight, float moveInput){
-        this.moveInput = Mathf.Clamp(moveInput, -1, 1); 
-        if(turnLeft) turnInput = -1;
-        else if(turnRight) turnInput = 1;
-        else turnInput = 0;
+    public void setInputs(float turnInput, float moveInput){
+        this.turnInput = turnInput; 
+        this.moveInput = moveInput;
     }
 
     private void HandleMovement()
