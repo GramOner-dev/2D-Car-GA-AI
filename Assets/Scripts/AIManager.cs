@@ -51,7 +51,7 @@ public class AIManager : MonoBehaviour
             cars[i] = Instantiate(carPrefab);
             cars[i].GetComponent<CarFitnessCalculator>().setTrackGenerator(trackGen);
             carAIs[i] = cars[i].GetComponent<CarAIManager>();
-
+            carAIs[i].index = i;
         }
     }
     private void Update() {
@@ -112,7 +112,26 @@ public class AIManager : MonoBehaviour
         int[] bestAgentIndexes = getBestAgentIndexes();
         foreach(int index in bestAgentIndexes) Debug.Log(index);
         MultiplyAgents(bestAgentIndexes);
-        DoGeneticModifications(bestAgentIndexes);
+        // DoGeneticModifications(bestAgentIndexes);
+    }
+
+    public void MultiplyAgents(int[] bestAgentIndexes)
+    {
+        if (bestAgentIndexes.Length == 0) return; 
+
+        Network[] bestAgents = new Network[bestAgentIndexes.Length];
+        for (int i = 0; i < bestAgents.Length; i++)
+        {
+            bestAgents[i] = agents[bestAgentIndexes[i]].Clone();
+        }
+
+        for (int i = 0; i < agents.Length; i+= numberOfAgentsToKeepPerGeneration)
+        {
+            for(int index = 0; index < numberOfAgentsToKeepPerGeneration; index ++){
+                if(i + index > numberOfAgentsToKeepPerGeneration - 1) return;
+                agents[i + index] = bestAgents[index];
+            }
+        }
     }
 
     public void DoGeneticModifications(int[] bestAgentIndexes)
@@ -178,38 +197,21 @@ public class AIManager : MonoBehaviour
         return rand.NextDouble() < mutationProbability;
     }
 
-    public void MultiplyAgents(int[] bestAgentIndexes)
-    {
-        Network[] bestAgents = new Network[bestAgentIndexes.Length];
-        for (int i = 0; i < bestAgents.Length; i++)
-        {
-            bestAgents[i] = agents[bestAgentIndexes[i]];
-        }
-        for (int i = 0; i < agents.Length; i+=bestAgents.Length)
-        {
-            for (int j = 0; j < bestAgents.Length; j++){
-
-                if(i+j > numberOfAgents - 1) return;
-                agents[i + j] = bestAgents[j];
-            }
-
-        }
-    }
+    
 
     public int[] getBestAgentIndexes()
     {
 
         int[] bestAgentIndexes = new int[numberOfAgentsToKeepPerGeneration];
         float[] agentScores = new float[numberOfAgents];
-        bool[] selected = new bool[numberOfAgents]; // To track if an agent has already been selected
+        bool[] selected = new bool[numberOfAgents];
 
-        // Populate agentScores with fitness values
         for (int i = 0; i < agents.Length; i++)
         {
             agentScores[i] = carAIs[i].getFitness();
         }
 
-        // Find the top scores and their indexes
+        
         for (int i = 0; i < numberOfAgentsToKeepPerGeneration; i++)
         {
             float maxScore = float.MinValue;
@@ -224,7 +226,7 @@ public class AIManager : MonoBehaviour
                 }
             }
             bestAgentIndexes[i] = maxIndex;
-            selected[maxIndex] = true; // Mark this index as selected
+            selected[maxIndex] = true;
         }
 
         return bestAgentIndexes;

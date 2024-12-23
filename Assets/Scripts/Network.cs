@@ -7,8 +7,10 @@ public class Network
     private State currentState;
 
     public Layer[] layers;
+    private int[] layerSizes;
     public Network(int[] layerSizes)
     {
+        this.layerSizes = layerSizes;
         int numberOfLayers = layerSizes.Length - 1;
         layers = new Layer[numberOfLayers];
         for (int i = 0; i < numberOfLayers; i++)
@@ -17,6 +19,14 @@ public class Network
             int numberOfInputsForLayer = layerSizes[i];
             layers[i] = new Layer(numberOfNeuronsForLayer, numberOfInputsForLayer);
         }
+    }
+
+    public Network Clone()
+    {
+        Network deepCopy = new Network(layerSizes);
+        deepCopy.setWeights(getWeights());
+        deepCopy.setBiases(getBiases());
+        return deepCopy;
     }
 
     public float[] GetQValues()
@@ -64,6 +74,15 @@ public class Network
         }
     }
 
+    public void setBiases(float[][] biases)
+    {
+        for(int i = 0; i < biases.Length; i++)
+        {
+            layers[i].setBiases(biases[i]);
+        }
+    }
+    
+
     public float[][][] getWeights()
     {
         float[][][] weights = new float[layers.Length][][];
@@ -72,6 +91,16 @@ public class Network
             weights[i] = layers[i].getWeights();
         }
         return weights;
+    }
+
+    public float[][] getBiases()
+    {
+        float[][] biases = new float[layers.Length][];
+        for(int i = 0; i < layers.Length; i++)
+        {
+            biases[i] = layers[i].getBiases();
+        }
+        return biases;
     }
 }
 
@@ -86,6 +115,17 @@ public class Layer
         {
             neurons[i] = new Neuron(numberOfInputs);
         }
+    }
+
+    public Layer Clone()
+    {
+        Layer clonedLayer = new Layer(neurons.Length, 0); // Dummy initialization
+        clonedLayer.neurons = new Neuron[this.neurons.Length];
+        for (int i = 0; i < this.neurons.Length; i++)
+        {
+            clonedLayer.neurons[i] = this.neurons[i].Clone();
+        }
+        return clonedLayer;
     }
 
     public float[] GetOutputs(float[] inputs, bool isOutputLayer)
@@ -106,6 +146,14 @@ public class Layer
         }
     }
 
+    public void setBiases(float[] biases)
+    {
+        for(int i = 0; i < neurons.Length; i++)
+        {
+            neurons[i].setBias(biases[i]);
+        }
+    }
+
     public float[][] getWeights()
     {
         float[][] weights = new float[neurons.Length][];
@@ -114,6 +162,15 @@ public class Layer
             weights[i] = neurons[i].getWeights();
         }
         return weights;
+    }
+    public float[] getBiases()
+    {
+        float[] biases = new float[neurons.Length];
+        for(int i = 0; i < neurons.Length; i++)
+        {
+            biases[i] = neurons[i].getBias();
+        }
+        return biases;
     }
 
     public void RandomlyAdjustNeuronWeightsAndBiases(float weightAdjustmentMultiplier)
@@ -139,6 +196,14 @@ public class Neuron
     {
         System.Random rand = new System.Random();
         return (float)(min + rand.NextDouble() * (max - min));
+    }
+
+    public Neuron Clone()
+    {
+        Neuron clonedNeuron = new Neuron(0); 
+        clonedNeuron.weights = (float[])this.weights.Clone(); 
+        clonedNeuron.bias = this.bias; 
+        return clonedNeuron;
     }
 
     public float ComputeOutput(float[] inputs, bool isOutputLayer)
@@ -173,8 +238,13 @@ public class Neuron
     {
         this.weights = weights;
     }
+    public void setBias(float bias){
+        this.bias = bias;
+    }
+
 
     public float[] getWeights() => weights;
+    public float getBias() => bias;
 
     public void RandomlyAdjustWeightsAndBias(float weightAdjustmentMultiplier)
     {

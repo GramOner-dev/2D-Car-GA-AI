@@ -8,6 +8,7 @@ public class CarAIManager : MonoBehaviour
     public CarViewManager carView;
     public WallManager wallManager;
     public CarFitnessCalculator carFitness;
+    public int index;
 
     public State currentState;
 
