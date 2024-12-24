@@ -120,17 +120,22 @@ public class AIManager : MonoBehaviour
         if (bestAgentIndexes.Length == 0) return; 
 
         Network[] bestAgents = new Network[bestAgentIndexes.Length];
+        Network[] newAgents = new Network[numberOfAgents];
         for (int i = 0; i < bestAgents.Length; i++)
         {
             bestAgents[i] = agents[bestAgentIndexes[i]].Clone();
         }
 
-        for (int i = 0; i < agents.Length; i+= numberOfAgentsToKeepPerGeneration)
-        {
-            for(int index = 0; index < numberOfAgentsToKeepPerGeneration; index ++){
-                if(i + index > numberOfAgentsToKeepPerGeneration - 1) return;
-                agents[i + index] = bestAgents[index];
-            }
+        // for (int i = 0; i < agents.Length; i+= numberOfAgentsToKeepPerGeneration)
+        // {
+        //     for(int index = 0; index < numberOfAgentsToKeepPerGeneration; index ++){
+        //         if(i + index > numberOfAgentsToKeepPerGeneration - 1) return;
+        //         agents[i + index] = bestAgents[index].Clone();
+        //     }
+        // }
+
+        for (int i = 0; i < agents.Length; i++){
+            agents[i] = bestAgents[i % numberOfAgentsToKeepPerGeneration];
         }
     }
 
